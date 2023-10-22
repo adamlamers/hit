@@ -1,0 +1,20 @@
+hit_config:
+  auth: null
+request:
+  method: GET
+  url: http://example.com
+  query_params:
+  - referrer: hit
+  headers:
+  - Accept: '*/*'
+  - Accept-Encoding: gzip, deflate
+  - Content-Type: application/json
+  - User-Agent: hit/0.0.1
+  body: |
+    {
+        "a": "bunch",
+        "of": [
+            "example",
+            "data"
+        ]
+    }
