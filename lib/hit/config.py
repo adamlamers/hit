@@ -1,8 +1,10 @@
 import os
+import sys
 
 from hit._yaml import yaml, Loader
-from requests.auth import HTTPBasicAuth, AuthBase
+from requests.auth import HTTPBasicAuth
 from hit.utils import find_parent_configs
+from hit.auth import CustomAuth
 
 class Specification:
 
@@ -110,18 +112,15 @@ class HitConfig:
                 print("file_dir must be set for custom auth")
                 return
 
-            script_globals = variables
 
             if not self.auth_script:
                 print("auth_script must be defined for custom auth")
                 return
 
-            with open(os.path.join(self.file_dir, self.auth_script), "r") as f:
-                exec(f.read(), script_globals)
-                auth_class = script_globals.get("Auth")
-                if issubclass(auth_class, AuthBase):
-                    self.auth_obj = auth_class()
+            self.auth_script = os.path.join(self.file_dir, self.auth_script)
 
+            custom_auth = CustomAuth(self.auth_script, variables)
+            self.auth_obj = custom_auth
 
 class RequestConfig:
 
@@ -140,9 +139,13 @@ class RequestConfig:
         for key, value in d.items():
             setattr(self, key, value)
 
-        self.query_params = self._resolve_query_params()
-        self.headers = self._resolve_headers()
-        self.cookies = self._resolve_cookies()
+        try:
+            self.query_params = self._resolve_query_params()
+            self.headers = self._resolve_headers()
+            self.cookies = self._resolve_cookies()
+        except KeyError as key:
+            print(f"Variable {key} could not be resolved")
+            sys.exit(1)
 
         # if body_src is defined but body is not, load the file with that path
         if not self.body and self.body_src:
