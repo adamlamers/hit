@@ -131,6 +131,39 @@ class Request(requests.Request):
 
         return repr_str
 
+    def to_curl(self):
+        prepared = self.prepare()
+        curl_command = f'curl -X {prepared.method} \\\n'
+        curl_command += f'  "{prepared.url}" \\\n'
+
+        # Add headers to the cURL command
+        for key, value in prepared.headers.items():
+            curl_command += f'  -H "{key}: {value}" \\\n'
+
+        # Add cookies to the cURL command
+        for key, value in prepared._cookies.items():
+            curl_command += f'  -b "{key}={value.value}" \\\n'
+
+        # Add data (if any) to the cURL command
+        if prepared.body:
+            if isinstance(prepared.body, str):
+                curl_command += f'  -d \'{prepared.body}\' \\\n'
+            else:
+                curl_command += f'  -d \'{prepared.body.decode("utf-8")}\' \\\n'
+
+        # Add options for SSL verification
+        # if not self.verify:
+        #     curl_command += '  --insecure \\\n'
+
+        # # Add options for handling redirects
+        # if not self.allow_redirects:
+        #     curl_command += '  --location \\\n'
+
+        if curl_command.endswith('\\\n'):
+            curl_command = curl_command[0:len(curl_command)-3]
+
+        return curl_command
+
     def __str__(self):
         if self.response:
             return f"<hit.request.Request [{self.response.status_code}]>"
