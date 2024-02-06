@@ -9,7 +9,9 @@ setup(
     url="",
     install_requires=[
         "click==8.1.7",
-        "requests"
+        "requests",
+        "pyyaml",
+        "jsonref",
     ],
     extras_require={
         "test": [

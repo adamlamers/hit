@@ -1,0 +1,13 @@
+config:
+  verbose: true
+  print_response_body: true
+request:
+  method: GET
+  url: https://openlibrary.org/search/authors.json
+  query_params:
+  - q: tom clancy
+  headers:
+  - Accept: '*/*'
+  - Accept-Encoding: gzip, deflate
+  - Content-Type: application/json
+  - User-Agent: hit/0.0.1

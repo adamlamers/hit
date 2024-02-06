@@ -100,7 +100,7 @@ class Request(requests.Request):
 
     def dump_response(self):
         prepared = self.prepare()
-        repr_str = f"[{os.path.relpath(self.file)}] {prepared.url} {self.response.status_code}"
+        repr_str = f"[{os.path.relpath(self.file)}] {prepared.method} {prepared.url} {self.response.status_code}"
 
         if self.options.print_request_headers or self.options.verbose:
             repr_str += "\n\nRequest headers:\n"
@@ -130,39 +130,6 @@ class Request(requests.Request):
                 repr_str += _get_print_handler(None)(self.response.content)
 
         return repr_str
-
-    def to_curl(self):
-        prepared = self.prepare()
-        curl_command = f'curl -X {prepared.method} \\\n'
-        curl_command += f'  "{prepared.url}" \\\n'
-
-        # Add headers to the cURL command
-        for key, value in prepared.headers.items():
-            curl_command += f'  -H "{key}: {value}" \\\n'
-
-        # Add cookies to the cURL command
-        for key, value in prepared._cookies.items():
-            curl_command += f'  -b "{key}={value.value}" \\\n'
-
-        # Add data (if any) to the cURL command
-        if prepared.body:
-            if isinstance(prepared.body, str):
-                curl_command += f'  -d \'{prepared.body}\' \\\n'
-            else:
-                curl_command += f'  -d \'{prepared.body.decode("utf-8")}\' \\\n'
-
-        # Add options for SSL verification
-        # if not self.verify:
-        #     curl_command += '  --insecure \\\n'
-
-        # # Add options for handling redirects
-        # if not self.allow_redirects:
-        #     curl_command += '  --location \\\n'
-
-        if curl_command.endswith('\\\n'):
-            curl_command = curl_command[0:len(curl_command)-3]
-
-        return curl_command
 
     def __str__(self):
         if self.response:

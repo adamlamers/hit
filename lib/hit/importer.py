@@ -10,10 +10,14 @@ def importer(path, type_):
         with open(path, "r") as f:
             doc = jsonref.load(f)
 
-        extracted_methods = {}
-        for urlpath, methods in doc.get("paths").items():
+        for path, methods in doc.get("paths", {}).items():
             for method, method_def in methods.items():
-                extracted_methods[urlpath] = {}
-                extracted_methods[urlpath]["operationId"] = method_def.get("operationId")
-                extracted_methods[urlpath][method] = method_def.get("requestBody")
-        print(jsonref.dumps(extracted_methods, indent=4))
+                print(path, method)
+                request_body = method_def.get("requestBody", {}).get("content")
+                for media_type in request_body:
+                    request_content = request_body.get(media_type).get("schema")
+                    # print(request_body)
+                    generate_request_obj(request_content["properties"])
+
+def generate_request_obj(request_content):
+    print(request_content)

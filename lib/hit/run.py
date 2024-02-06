@@ -29,8 +29,6 @@ def run(path, recursive, pretty, print_response_headers, print_response_body, en
     click.echo(f"Found {len(found_files)} spec files")
 
     for file in found_files:
-        if recursive:
-            click.echo(f"Executing {os.path.relpath(file)}")
 
         request = Request(file, environment=environment)
         response = request.send()

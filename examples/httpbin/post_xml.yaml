@@ -1,0 +1,27 @@
+config:
+  print_response_headers: false
+  print_response_body: false
+  print_request_headers: false
+  print_request_body: false
+  verbose: true
+request:
+  method: POST
+  url: https://httpbin.org/post
+  query_params:
+  - referrer: hit
+  headers:
+  - Accept: '*/*'
+  - Accept-Encoding: gzip, deflate
+  - Content-Type: application/xml
+  - User-Agent: hit/0.0.1
+  - Environment: '{environment}'
+  body: |
+    <this>
+      <is>
+        <some>
+          <xml></xml>
+        </some>
+      </is>
+    </this>
+expect:
+  status_code: 200

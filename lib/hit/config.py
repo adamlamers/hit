@@ -31,7 +31,7 @@ class Specification:
 
         self.request = RequestConfig()
         self.request.load_dict(
-            self._raw_data.get("request", {}), 
+            self._raw_data.get("request", {}),
             file_dir=self._file_dir,
         )
 
@@ -112,7 +112,6 @@ class HitConfig:
                 print("file_dir must be set for custom auth")
                 return
 
-
             if not self.auth_script:
                 print("auth_script must be defined for custom auth")
                 return
@@ -121,6 +120,10 @@ class HitConfig:
 
             custom_auth = CustomAuth(self.auth_script, variables)
             self.auth_obj = custom_auth
+
+    def prepare_middleware(self, variables={}):
+
+        pass
 
 class RequestConfig:
 

@@ -1,0 +1,19 @@
+config:
+  auth: basic
+  username: user
+  password: password
+  print_response_headers: true
+  print_response_body: true
+request:
+  method: GET
+  url: https://httpbin.org/basic-auth/user/password
+  headers:
+  - Accept: '*/*'
+  - Accept-Encoding: gzip, deflate
+  - Content-Type: application/json
+  - User-Agent: hit/0.0.1
+expect:
+  status_code: 200
+  headers:
+    content-type: application/json
+    asd: def

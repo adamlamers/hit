@@ -131,6 +131,39 @@ def requests_to_fetch(requests_obj):
 
     return fetch_code
 
+def request_to_curl(requests_obj):
+    prepared = requests_obj.prepare()
+    curl_command = f'curl -X {prepared.method} \\\n'
+    curl_command += f'  "{prepared.url}" \\\n'
+
+    # Add headers to the cURL command
+    for key, value in prepared.headers.items():
+        curl_command += f'  -H "{key}: {value}" \\\n'
+
+    # Add cookies to the cURL command
+    for key, value in prepared._cookies.items():
+        curl_command += f'  -b "{key}={value.value}" \\\n'
+
+    # Add data (if any) to the cURL command
+    if prepared.body:
+        if isinstance(prepared.body, str):
+            curl_command += f'  -d \'{prepared.body}\' \\\n'
+        else:
+            curl_command += f'  -d \'{prepared.body.decode("utf-8")}\' \\\n'
+
+    # Add options for SSL verification
+    #if not prepared.verify:
+    #    curl_command += '  --insecure \\\n'
+
+    # # Add options for handling redirects
+    # if not self.allow_redirects:
+    #     curl_command += '  --location \\\n'
+
+    if curl_command.endswith('\\\n'):
+        curl_command = curl_command[0:len(curl_command)-3]
+
+    return curl_command
+
 @click.command()
 @click.argument('path')
 @click.option("--type", "-t", "_type", type=click.Choice(["curl", "fetch", "go", "requests"], case_sensitive=False), default="curl")
@@ -138,7 +171,7 @@ def requests_to_fetch(requests_obj):
 def generate(path, _type, environment):
     r = Request(path, environment=environment)
     if _type == "curl":
-        click.echo(r.to_curl())
+        click.echo(request_to_curl(r))
     elif _type == "fetch":
         click.echo(requests_to_fetch(r))
     elif _type == "go":

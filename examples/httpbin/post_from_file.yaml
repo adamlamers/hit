@@ -1,0 +1,15 @@
+config:
+  verbose: true
+request:
+  method: POST
+  url: https://httpbin.org/post
+  query_params:
+  - referrer: hit
+  headers:
+  - Accept: '*/*'
+  - Accept-Encoding: gzip, deflate
+  - Content-Type: application/json
+  - User-Agent: hit/0.0.1
+  body_src: data/external_body.txt
+expect:
+  status_code: 200

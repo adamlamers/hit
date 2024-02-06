@@ -1,0 +1,15 @@
+variables:
+  test: test
+  var2: var2value
+  environment: null
+environments:
+  prod:
+    environment: prod
+    token: asd
+    API_KEY: prod_api_key
+    API_SECRET: prod_api_secret
+  staging:
+    environment: staging
+    token: def
+    API_KEY: staging_api_key
+    API_SECRET: staging_api_secret
